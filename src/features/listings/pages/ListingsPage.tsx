@@ -454,15 +454,14 @@ export default function ListingsPage() {
         </section>
 
         {shouldShowResults && (
-        <section className="mx-auto max-w-7xl px-5 py-12">
+        <section className="mx-auto max-w-7xl px-5 pb-20 pt-12">
           <div className="mb-8 grid gap-4  pb-6 md:grid-cols-[1fr_auto] md:items-end">
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-1xl font-black text-black">AirBnb Edit</h1>
-                <span className="flex h-8 w-8 items-center justify-center   text-lg font-black text-white"></span>
+                <h1 className="text-xl font-bold tracking-tight text-slate-900">Browse stays</h1>
               </div>
-              <p className="mt-1 text-sm font-semibold text-black/55">
-                {activeResults.length} selected stay{activeResults.length === 1 ? '' : 's'} from the marketplace
+              <p className="mt-1 text-sm text-slate-500">
+                {activeResults.length} result{activeResults.length === 1 ? '' : 's'}
               </p>
             </div>
             <div className="hidden items-center gap-2 sm:flex">

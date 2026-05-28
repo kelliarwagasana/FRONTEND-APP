@@ -5,6 +5,7 @@ import DashboardSidebar from '../components/DashboardSidebar'
 import DashboardTopbar from '../components/DashboardTopbar'
 import { getDashboardSection } from '../utils/dashboardUtils'
 import { getCurrentUser, subscribeToAuthChange } from '../../auth/authStorage'
+import Footer from '../../../shared/components/Footer'
 
 export default function DashboardLayout() {
   const location = useLocation()
@@ -22,9 +23,9 @@ export default function DashboardLayout() {
 
   if (!currentUser) {
     return (
-      <div className="dashboard-shell min-h-screen bg-white text-black">
+      <div className="dashboard-shell flex min-h-screen flex-col bg-white text-black">
         <Navbar variant="solid" />
-        <main className="mx-auto flex min-h-[60vh] max-w-xl items-center px-6 py-16 text-center">
+        <main className="mx-auto flex min-h-[60vh] max-w-xl flex-1 items-center px-6 py-16 text-center">
           <div className="w-full border-2 border-black bg-white p-8 shadow-[8px_8px_0_#f97316]">
             <h1 className="text-3xl font-black text-black">Login required</h1>
             <Link
@@ -35,6 +36,7 @@ export default function DashboardLayout() {
             </Link>
           </div>
         </main>
+        <Footer />
       </div>
     )
   }
@@ -44,21 +46,26 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div
-      className={`dashboard-shell min-h-screen bg-white text-black transition-all duration-300 ${isSidebarVisible ? 'lg:pl-[315px]' : ''}`}
-    >
-      <DashboardSidebar currentUser={currentUser} activeSection={activeSection} isVisible={isSidebarVisible} />
-      <div className="min-w-0">
-        <DashboardTopbar
+    <div className="dashboard-shell flex min-h-screen flex-col bg-white text-black">
+      <div className={`flex min-h-0 flex-1 ${isSidebarVisible ? 'lg:pl-[315px]' : ''}`}>
+        <DashboardSidebar
           currentUser={currentUser}
           activeSection={activeSection}
-          isSidebarVisible={isSidebarVisible}
-          onToggleSidebar={() => setIsSidebarVisible((current) => !current)}
+          isVisible={isSidebarVisible}
         />
-        <main className="p-4 lg:p-7">
-          <Outlet context={{ currentUser, isAdmin }} />
-        </main>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <DashboardTopbar
+            currentUser={currentUser}
+            activeSection={activeSection}
+            isSidebarVisible={isSidebarVisible}
+            onToggleSidebar={() => setIsSidebarVisible((current) => !current)}
+          />
+          <main className="flex-1 p-4 pb-8 lg:p-7">
+            <Outlet context={{ currentUser, isAdmin }} />
+          </main>
+        </div>
       </div>
+      <Footer />
     </div>
   )
 }

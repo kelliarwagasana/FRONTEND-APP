@@ -1,4 +1,4 @@
-import type { User } from '../../auth/types'
+import type { Role, User } from '../../auth/types'
 
 export type DashboardSection =
   | 'overview'
@@ -8,6 +8,7 @@ export type DashboardSection =
   | 'reviews'
   | 'listings'
   | 'profile'
+  | 'analytics'
   | 'moderation'
   | 'platform-bookings'
   | 'create-listing'
@@ -26,6 +27,7 @@ export function getDashboardSection(section?: string, isAdmin = false): Dashboar
     'reviews',
     'listings',
     'profile',
+    'analytics',
     'moderation',
     'platform-bookings',
   ]
@@ -58,6 +60,7 @@ export function getSectionTitle(section: DashboardSection) {
     reviews: 'Reviews',
     listings: 'Listings',
     profile: 'Profile',
+    analytics: 'Analytics',
     moderation: 'Moderation queue',
     'platform-bookings': 'All bookings',
     'create-listing': 'Create listing',
@@ -80,6 +83,16 @@ export function statusClasses(status: string) {
   }
 
   return 'bg-amber-50 text-amber-700 border-amber-200'
+}
+
+const ROLE_DISPLAY: Record<Role, string> = {
+  ADMIN: 'Administrator',
+  HOST: 'Host',
+  GUEST: 'Guest',
+}
+
+export function formatUserRole(role: Role): string {
+  return ROLE_DISPLAY[role]
 }
 
 export function initials(name: string) {

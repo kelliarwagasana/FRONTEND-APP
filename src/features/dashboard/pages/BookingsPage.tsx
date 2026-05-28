@@ -1,15 +1,17 @@
-import { FiCheckCircle, FiXCircle } from 'react-icons/fi'
+import { FiCalendar, FiCheckCircle, FiClock, FiXCircle } from 'react-icons/fi'
 import { useOutletContext } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import type { DashboardOutletContext } from '../utils/dashboardUtils'
 import { statusClasses } from '../utils/dashboardUtils'
-import { useHostBookings, useHostBookingAction } from '../../host/hooks'
+import HostStatCard from '../../host/components/HostStatCard'
+import { useHostBookings, useHostBookingAction, useHostStats } from '../../host/hooks'
 import type { Booking } from '../../bookings/types'
 
 export default function BookingsPage() {
   const { isAdmin } = useOutletContext<DashboardOutletContext>()
   const bookingsQuery = useHostBookings()
   const hostAction = useHostBookingAction()
+  const { stats, isLoading: statsLoading } = useHostStats()
 
   if (isAdmin) {
     return (
@@ -34,30 +36,68 @@ export default function BookingsPage() {
   }
 
   return (
-    <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-      <BookingsHeader count={bookings.length} isLoading={bookingsQuery.isPending} />
-      <div className="overflow-hidden bg-[#f8fafc] px-3 py-3">
-        {bookingsQuery.isPending ? (
-          <p className="p-6 text-sm text-slate-500">Loading bookings…</p>
-        ) : bookings.length === 0 ? (
-          <p className="p-6 text-sm text-slate-500">No bookings yet.</p>
-        ) : (
-          <BookingsTable bookings={bookings} onStatusUpdate={handleStatusUpdate} />
-        )}
-      </div>
-    </section>
-  )
-}
-
-function BookingsHeader({ count, isLoading }: { count: number; isLoading: boolean }) {
-  return (
-    <div className="flex flex-col gap-3 border-b border-slate-200 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h2 className="text-xl font-bold text-slate-950">Bookings</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          {isLoading ? 'Loading…' : `${count} total booking${count === 1 ? '' : 's'}`}
+    <div className="space-y-6">
+      <section className="rounded-2xl border border-[#eadfdb] bg-white p-5 shadow-sm sm:p-6">
+        <h1 className="text-2xl font-bold text-[#292626]">Bookings</h1>
+        <p className="mt-1 text-sm text-[#857d7a]">
+          Review requests, confirm stays, and track reservation status.
         </p>
-      </div>
+      </section>
+
+      {statsLoading ? (
+        <p className="text-sm text-[#857d7a]">Loading booking stats…</p>
+      ) : (
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <HostStatCard
+            label="Booking requests"
+            value={stats.bookingRequests}
+            hint="All reservations for your listings"
+            icon={FiCalendar}
+          />
+          <HostStatCard
+            label="Pending bookings"
+            value={stats.pendingBookings}
+            hint="Awaiting your approval"
+            icon={FiClock}
+            accent="amber"
+          />
+          <HostStatCard
+            label="Confirmed"
+            value={stats.confirmedBookings}
+            hint="Approved and active stays"
+            icon={FiCheckCircle}
+            accent="emerald"
+          />
+          <HostStatCard
+            label="Cancelled"
+            value={stats.cancelledBookings}
+            hint="Declined or cancelled reservations"
+            icon={FiXCircle}
+            accent="red"
+          />
+        </section>
+      )}
+
+      <section className="overflow-hidden rounded-2xl border border-[#eadfdb] bg-white shadow-sm">
+        <div className="border-b border-[#eadfdb] px-5 py-4 sm:px-6 sm:py-5">
+          <h2 className="text-lg font-bold text-[#292626]">All reservations</h2>
+          <p className="mt-1 text-sm text-[#857d7a]">
+            {bookingsQuery.isPending
+              ? 'Loading…'
+              : `${bookings.length} booking${bookings.length === 1 ? '' : 's'}`}
+          </p>
+        </div>
+
+        <div className="overflow-hidden bg-[#faf8f7] px-3 py-3">
+          {bookingsQuery.isPending ? (
+            <p className="p-6 text-sm text-[#857d7a]">Loading bookings…</p>
+          ) : bookings.length === 0 ? (
+            <p className="p-6 text-sm text-[#857d7a]">No bookings yet.</p>
+          ) : (
+            <BookingsTable bookings={bookings} onStatusUpdate={handleStatusUpdate} />
+          )}
+        </div>
+      </section>
     </div>
   )
 }
@@ -72,8 +112,8 @@ function BookingsTable({
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[1100px] border-separate border-spacing-y-2 text-left text-sm whitespace-nowrap">
-        <thead className="text-xs uppercase tracking-[0.16em] text-white">
-          <tr className="bg-slate-950 shadow-sm">
+        <thead className="text-xs uppercase tracking-[0.14em] text-white">
+          <tr className="bg-[#292626] shadow-sm">
             <th className="rounded-l-xl px-5 py-4 font-semibold">Listing</th>
             <th className="px-5 py-4 font-semibold">Guest</th>
             <th className="px-5 py-4 font-semibold">Check-in</th>
@@ -91,17 +131,17 @@ function BookingsTable({
                 index % 2 === 0 ? 'bg-white' : 'bg-[#fff8f5]'
               }`}
             >
-              <td className="rounded-l-xl px-5 py-4 font-semibold text-slate-900">
+              <td className="rounded-l-xl px-5 py-4 font-semibold text-[#292626]">
                 {booking.listing?.title ?? 'Listing'}
               </td>
-              <td className="px-5 py-4 text-slate-600">{booking.guest?.name ?? 'Guest'}</td>
-              <td className="px-5 py-4 text-slate-600">
+              <td className="px-5 py-4 text-[#857d7a]">{booking.guest?.name ?? 'Guest'}</td>
+              <td className="px-5 py-4 text-[#857d7a]">
                 {new Date(booking.checkIn).toLocaleDateString()}
               </td>
-              <td className="px-5 py-4 text-slate-600">
+              <td className="px-5 py-4 text-[#857d7a]">
                 {new Date(booking.checkOut).toLocaleDateString()}
               </td>
-              <td className="px-5 py-4 font-semibold text-slate-900">
+              <td className="px-5 py-4 font-semibold text-[#292626]">
                 ${booking.totalPrice.toLocaleString()}
               </td>
               <td className="px-5 py-4">
@@ -136,7 +176,7 @@ function BookingActions({
       <button
         type="button"
         onClick={() => onStatusUpdate(bookingId, 'CONFIRMED')}
-        className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700"
+        className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100"
       >
         <FiCheckCircle />
         Confirm
@@ -144,7 +184,7 @@ function BookingActions({
       <button
         type="button"
         onClick={() => onStatusUpdate(bookingId, 'CANCELLED')}
-        className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700"
+        className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-100"
       >
         <FiXCircle />
         Cancel

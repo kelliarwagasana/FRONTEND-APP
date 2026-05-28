@@ -109,6 +109,29 @@ html.dark [class*="hover:bg-[#fff7ed]"]:hover {
   background-color: #2a1f1f !important;
 }
 
+/* Site footer: always light bar + dark text (home dark mode, etc.) */
+.site-footer {
+  position: relative;
+  z-index: 30;
+  background-color: #f7f7f7 !important;
+  border-top-color: #dddddd !important;
+  color: #222222 !important;
+}
+
+.site-footer .site-footer__copy,
+.site-footer .site-footer__link,
+.site-footer button.site-footer__link {
+  color: #222222 !important;
+}
+
+.site-footer .site-footer__dot {
+  color: rgba(34, 34, 34, 0.4) !important;
+}
+
+.site-footer .site-footer__link:hover {
+  color: #000000 !important;
+}
+
 .dashboard-shell {
   --airbnb-border: rgba(34, 34, 34, 0.1);
   --airbnb-border-strong: rgba(34, 34, 34, 0.18);

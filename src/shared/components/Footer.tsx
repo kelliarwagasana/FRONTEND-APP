@@ -1,62 +1,103 @@
 import { Link } from 'react-router-dom'
-import { uptownHouseImage } from '../brandImages'
+import { FiGlobe } from 'react-icons/fi'
+import { FaFacebookF, FaInstagram, FaXTwitter } from 'react-icons/fa6'
+
+const currentYear = new Date().getFullYear()
+
+function PrivacyChoicesIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="inline-block shrink-0"
+      aria-hidden
+    >
+      <rect x="1" y="3" width="14" height="10" rx="2" fill="#4285F4" />
+      <path d="M5 8l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
 export default function Footer() {
   return (
-    <footer
-      className="relative overflow-hidden border-t-2 border-black bg-black px-6 py-14 text-white"
-      style={{ backgroundImage: `url(${uptownHouseImage})`, backgroundPosition: 'center', backgroundSize: 'cover' }}
-    >
-      <div className="absolute inset-0 bg-black/80" />
-      <div className="relative mx-auto max-w-7xl">
-        <div className="grid gap-10 border-b border-white/20 pb-10 lg:grid-cols-[1.2fr_0.8fr_1fr]">
-          <div>
-            <Link to="/" className="text-5xl font-black uppercase tracking-tight">
-              Air<span className="text-[#f97316]">Bnb.</span>
-            </Link>
-            <p className="mt-5 max-w-sm leading-7 text-white/70">
-              Curated places, trusted hosts, and simple booking for memorable stays.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-xl font-black uppercase tracking-[0.12em] text-[#f97316]">Stay Connected</h3>
-            <p className="mt-6 text-white/75">1123 Fictional St, San Francisco, CA 94103</p>
-            <p className="mt-4 font-semibold">(123) 456-7890</p>
-            <p className="mt-2 font-semibold">support@AirBnb.com</p>
-          </div>
-
-          <div>
-            <h3 className="text-xl font-black uppercase tracking-[0.12em] text-[#f97316]">Newsletter</h3>
-            <div className="mt-6 flex border-2 border-white p-2">
-              <input
-                type="email"
-                placeholder="name@example.com"
-                className="min-h-12 flex-1 bg-transparent px-4 font-semibold text-white outline-none placeholder:text-white/55"
-              />
-              <button type="button" className="h-12 w-12 bg-[#f97316] font-black transition hover:bg-white hover:text-black">
-                -&gt;
-              </button>
-            </div>
-            <div className="mt-6 flex gap-3">
-              {['ig', 'tw', 'fb', 'wa'].map((item) => (
-                <span
-                  key={item}
-                  className="flex h-11 w-11 items-center justify-center border border-white/30 bg-white/10 text-sm font-bold uppercase transition hover:border-[#f97316] hover:text-[#f97316]"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
+    <footer className="site-footer w-full shrink-0 border-t border-[#dddddd] bg-[#f7f7f7]">
+      <div className="mx-auto flex max-w-[1280px] flex-col gap-4 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:py-5 md:px-10 lg:px-16">
+        <div className="site-footer__copy flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+          <span>© {currentYear} AirBnb, Inc.</span>
+          <span className="site-footer__dot" aria-hidden>
+            ·
+          </span>
+          <Link to="/privacy" className="site-footer__link underline">
+            Privacy
+          </Link>
+          <span className="site-footer__dot" aria-hidden>
+            ·
+          </span>
+          <Link to="/terms" className="site-footer__link underline">
+            Terms
+          </Link>
+          <span className="site-footer__dot" aria-hidden>
+            ·
+          </span>
+          <Link to="/privacy#choices" className="site-footer__link inline-flex items-center gap-1.5 underline">
+            Your Privacy Choices
+            <PrivacyChoicesIcon />
+          </Link>
         </div>
 
-        <div className="flex flex-col gap-4 pt-7 text-white/65 md:flex-row md:items-center md:justify-between">
-          <p>© 2026 AirBnb - All Rights Reserved</p>
-          <p>Privacy / Sitemap / Cookies</p>
+        <div className="flex flex-wrap items-center gap-4 text-sm font-medium">
+          <button
+            type="button"
+            className="site-footer__link inline-flex items-center gap-2 underline"
+            aria-label="Language: English (US)"
+          >
+            <FiGlobe className="text-base" aria-hidden />
+            English (US)
+          </button>
+          <button
+            type="button"
+            className="site-footer__link inline-flex items-center gap-1 underline"
+            aria-label="Currency: US Dollar"
+          >
+            <span className="text-base font-semibold" aria-hidden>
+              $
+            </span>
+            USD
+          </button>
+          <div className="flex items-center gap-4" aria-label="Social media">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="site-footer__link transition"
+              aria-label="AirBnb on Facebook"
+            >
+              <FaFacebookF className="h-4 w-4" />
+            </a>
+            <a
+              href="https://x.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="site-footer__link transition"
+              aria-label="AirBnb on X"
+            >
+              <FaXTwitter className="h-4 w-4" />
+            </a>
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="site-footer__link transition"
+              aria-label="AirBnb on Instagram"
+            >
+              <FaInstagram className="h-4 w-4" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
   )
 }
-

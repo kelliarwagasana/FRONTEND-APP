@@ -16,6 +16,7 @@ import DashboardReviewsPage from './features/dashboard/pages/ReviewsPage'
 import DashboardListingsPage from './features/dashboard/pages/ListingsPage'
 import DashboardProfilePage from './features/dashboard/pages/ProfilePage'
 import DashboardOverviewPage from './features/dashboard/pages/OverviewPage'
+import DashboardAnalyticsPage from './features/dashboard/pages/AnalyticsPage'
 import ModerationQueuePage from './features/admin/pages/ModerationQueuePage'
 import AllBookingsAdminPage from './features/admin/pages/AllBookingsAdminPage'
 import CreateListingPage from './features/host/pages/CreateListingPage'
@@ -25,6 +26,9 @@ import ListingsPage from './features/listings/pages/ListingsPage'
 import SavedListingsPage from './features/listings/pages/SavedListingsPage'
 import LoadingPage from './shared/components/LoadingPage'
 import NotFound from './shared/components/NotFound'
+import AppLayout from './shared/layout/AppLayout'
+import PrivacyPage from './shared/pages/PrivacyPage'
+import TermsPage from './shared/pages/TermsPage'
 import { Toaster } from 'react-hot-toast'
 
 const DashboardPage = lazy(() => import('./features/dashboard/pages/DashboardPage'))
@@ -51,52 +55,63 @@ export default function App() {
     <BrowserRouter>
     
       <RouteProgressListener />
-      <Toaster position="top-center" />
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            boxShadow: 'none',
+            border: 'none',
+          },
+        }}
+      />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/listings" element={<ListingsPage />} />
-        <Route
-          path="/listings/:listingId"
-          element={
-            <Suspense fallback={<LoadingPage />}>
-              <ListingDetailPage />
-            </Suspense>
-            
-          }
-        />
-        <Route path="/listings/:listingId/book" element={<BookingFlowPage />} />
-        <Route path="/saved" element={<SavedListingsPage />} />
-        <Route path="/explore" element={<Navigate to="/listings" replace />} />
-        <Route path="/bookings" element={<BookingsPage />} />
-        <Route
-          path="/dashboard"
-          element={
-            <Suspense fallback={<LoadingPage />}>
-              <DashboardPage />
-            </Suspense>
-            
-          }
-        >
-          <Route index element={<DashboardOverviewPage />} />
-          <Route path="bookings" element={<DashboardBookingsPage />} />
-          <Route path="guests" element={<DashboardGuestsPage />} />
-          <Route path="users" element={<DashboardUsersPage />} />
-          <Route path="reviews" element={<DashboardReviewsPage />} />
-          <Route path="listings" element={<DashboardListingsPage />} />
-          <Route path="moderation" element={<ModerationQueuePage />} />
-          <Route path="platform-bookings" element={<AllBookingsAdminPage />} />
-          <Route path="create-listing" element={<CreateListingPage />} />
-          <Route path="edit-listing/:listingId" element={<EditListingPage />} />
-          <Route path="profile" element={<DashboardProfilePage />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/listings" element={<ListingsPage />} />
+          <Route
+            path="/listings/:listingId"
+            element={
+              <Suspense fallback={<LoadingPage />}>
+                <ListingDetailPage />
+              </Suspense>
+            }
+          />
+          <Route path="/listings/:listingId/book" element={<BookingFlowPage />} />
+          <Route path="/saved" element={<SavedListingsPage />} />
+          <Route path="/explore" element={<Navigate to="/listings" replace />} />
+          <Route path="/bookings" element={<BookingsPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              <Suspense fallback={<LoadingPage />}>
+                <DashboardPage />
+              </Suspense>
+            }
+          >
+            <Route index element={<DashboardOverviewPage />} />
+            <Route path="analytics" element={<DashboardAnalyticsPage />} />
+            <Route path="bookings" element={<DashboardBookingsPage />} />
+            <Route path="guests" element={<DashboardGuestsPage />} />
+            <Route path="users" element={<DashboardUsersPage />} />
+            <Route path="reviews" element={<DashboardReviewsPage />} />
+            <Route path="listings" element={<DashboardListingsPage />} />
+            <Route path="moderation" element={<ModerationQueuePage />} />
+            <Route path="platform-bookings" element={<AllBookingsAdminPage />} />
+            <Route path="create-listing" element={<CreateListingPage />} />
+            <Route path="edit-listing/:listingId" element={<EditListingPage />} />
+            <Route path="profile" element={<DashboardProfilePage />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Route>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/change-password" element={<ChangePasswordPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )

@@ -2,7 +2,7 @@ import type { User } from '../../auth/types'
 import { initials } from '../utils/dashboardUtils'
 
 interface UserAvatarProps {
-  user: Pick<User, 'name' | 'avatar'>
+  user: Pick<User, 'name' | 'username' | 'avatar'>
   size?: 'sm' | 'md' | 'lg' | 'xl'
   className?: string
 }
@@ -17,13 +17,15 @@ const sizeClasses = {
 export default function UserAvatar({ user, size = 'md', className = '' }: UserAvatarProps) {
   const baseClass = `${sizeClasses[size]} shrink-0 overflow-hidden rounded-full bg-slate-900 text-white ${className}`
 
+  const label = user.username?.trim() || user.name
+
   if (user.avatar) {
-    return <img src={user.avatar} alt={user.name} className={`${baseClass} object-cover`} />
+    return <img src={user.avatar} alt={label} className={`${baseClass} object-cover`} />
   }
 
   return (
     <span className={`${baseClass} flex items-center justify-center font-bold`}>
-      {initials(user.name)}
+      {initials(label)}
     </span>
   )
 }

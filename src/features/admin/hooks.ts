@@ -24,6 +24,18 @@ export function useAdminStats() {
   })
 }
 
+export function useAdminAllListings() {
+  const { user } = useAuth()
+  return useQuery({
+    queryKey: ['listings', 'admin', 'all'],
+    queryFn: async () => {
+      const rows = await api.get<Record<string, unknown>[]>('/api/v1/listings/admin/all')
+      return rows.map((row) => mapListingFromApi(row))
+    },
+    enabled: user?.role === 'ADMIN',
+  })
+}
+
 export function usePendingListings() {
   const { user } = useAuth()
   return useQuery({
@@ -56,6 +68,8 @@ export function useApproveListing() {
       qc.invalidateQueries({ queryKey: ['listings'] })
       qc.invalidateQueries({ queryKey: ['listings', 'mine'] })
       qc.invalidateQueries({ queryKey: ['listings', 'pending'] })
+      qc.invalidateQueries({ queryKey: ['listings', 'admin', 'all'] })
+      qc.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
 }
@@ -80,6 +94,8 @@ export function useRejectListing() {
       qc.invalidateQueries({ queryKey: ['listings'] })
       qc.invalidateQueries({ queryKey: ['listings', 'mine'] })
       qc.invalidateQueries({ queryKey: ['listings', 'pending'] })
+      qc.invalidateQueries({ queryKey: ['listings', 'admin', 'all'] })
+      qc.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
 }

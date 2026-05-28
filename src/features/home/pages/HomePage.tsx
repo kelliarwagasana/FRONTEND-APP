@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import Navbar from '../../../shared/components/Navbar'
-import Footer from '../../../shared/components/Footer'
 import ListingCard from '../../listings/components/ListingCard'
 import { useListings } from '../../listings/hooks/useListings'
 import Spinner from '../../../shared/components/Spinner'
@@ -41,16 +40,16 @@ export default function HomePage() {
   return (
     <div className="relative min-h-screen bg-white text-black">
       <div
-        className="fixed inset-0 bg-cover bg-center"
+        className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${uptownHouseImage})` }}
       />
       <div
-        className={`fixed inset-0 transition-all duration-500 ${
+        className={`absolute inset-0 transition-all duration-500 ${
           isScrolled ? 'bg-white/95' : 'bg-black/55'
         }`}
       />
       <div
-        className={`fixed inset-0 bg-gradient-to-b transition-all duration-500 ${
+        className={`absolute inset-0 bg-gradient-to-b transition-all duration-500 ${
           isScrolled
             ? 'from-white/90 via-white/70 to-white/100'
             : 'from-black/10 via-black/30 to-black/95'
@@ -130,7 +129,7 @@ export default function HomePage() {
         </section>
 
         <section className="relative z-10  bg-white">
-          <div className="mx-auto max-w-7xl px-6 py-24">
+          <div className="mx-auto max-w-7xl px-6 pb-16 pt-24">
             <div className="mb-10 grid gap-6  pb-8 md:grid-cols-[0.8fr_1.2fr_auto] md:items-end">
               <div>
                 <p className="text-sm font-black uppercase tracking-[0.35em] text-[#f97316]">Featured properties</p>
@@ -163,9 +162,6 @@ export default function HomePage() {
         </section>
       </main>
 
-      <div className="relative z-10">
-        <Footer />
-      </div>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { User } from '../../auth/types'
-import type { DashboardSection } from '../utils/dashboardUtils'
+import { formatUserRole, type DashboardSection } from '../utils/dashboardUtils'
 import UserAvatar from './UserAvatar'
 
 interface DashboardSidebarProps {
@@ -12,26 +12,24 @@ interface DashboardSidebarProps {
 export default function DashboardSidebar({ currentUser, activeSection, isVisible }: DashboardSidebarProps) {
   const isAdmin = currentUser.role === 'ADMIN'
   const isHost = currentUser.role === 'HOST'
+
   const items = [
-    { section: 'overview', label: 'Dashboard', marker: 'D' },
+    { section: 'overview' as const, label: 'Dashboard', marker: 'D' },
     ...(isHost ? [{ section: 'create-listing' as const, label: 'New listing', marker: 'N' }] : []),
-    { section: 'listings', label: 'My Listing', marker: 'L' },
-    { section: 'reviews', label: 'Reviews', marker: 'R' },
-    { section: 'bookings', label: 'Bookings', marker: 'B' },
-    { section: 'guests', label: 'Users', marker: 'G' },
+    { section: 'listings' as const, label: isAdmin ? 'Listings' : 'My Listing', marker: 'L' },
+    { section: 'reviews' as const, label: 'Reviews', marker: 'R' },
+    ...(isHost || isAdmin ? [{ section: 'analytics' as const, label: 'Analytics', marker: 'Y' }] : []),
+    ...(isHost ? [{ section: 'bookings' as const, label: 'Bookings', marker: 'B' }] : []),
+    ...(isHost ? [{ section: 'guests' as const, label: 'Guest list', marker: 'G' }] : []),
     ...(isAdmin ? [{ section: 'users' as const, label: 'Users', marker: 'U' }] : []),
-    ...(isAdmin
-      ? [
-          { section: 'moderation' as const, label: 'Moderation', marker: 'M' },
-          { section: 'platform-bookings' as const, label: 'All bookings', marker: 'A' },
-        ]
-      : []),
-    { section: 'profile', label: 'Profile', marker: 'P' },
-  ] as Array<{ section: DashboardSection; label: string; marker: string }>
+    ...(isAdmin ? [{ section: 'moderation' as const, label: 'Moderation', marker: 'M' }] : []),
+    ...(isAdmin ? [{ section: 'platform-bookings' as const, label: 'All bookings', marker: 'A' }] : []),
+    { section: 'profile' as const, label: 'Profile', marker: 'P' },
+  ] satisfies Array<{ section: DashboardSection; label: string; marker: string }>
 
   return (
     <aside
-      className={`z-40 border-r-2 border-black bg-white text-black transition-transform duration-300 lg:fixed lg:inset-y-0 lg:left-0 lg:w-[315px] ${
+      className={`z-40 border-r-2 border-black bg-white text-black transition-transform duration-300 lg:fixed lg:bottom-[4.75rem] lg:left-0 lg:top-0 lg:w-[315px] ${
         isVisible ? 'block translate-x-0' : 'hidden lg:block lg:-translate-x-full'
       }`}
     >
@@ -44,8 +42,12 @@ export default function DashboardSidebar({ currentUser, activeSection, isVisible
       <div className="mx-6 mb-6 flex items-center gap-3 border-2 border-black bg-white p-3 shadow-[5px_5px_0_#f97316] lg:hidden">
         <UserAvatar user={currentUser} size="md" />
         <div className="min-w-0">
-          <p className="truncate font-black text-black">{currentUser.name}</p>
-          <p className="truncate text-xs text-black/55">{currentUser.email}</p>
+          <p className="truncate font-semibold tracking-tight text-slate-900">
+            {currentUser.username?.trim() || currentUser.name}
+          </p>
+          <p className="mt-0.5 truncate text-[11px] font-medium uppercase tracking-[0.18em] text-slate-500">
+            {formatUserRole(currentUser.role)}
+          </p>
         </div>
       </div>
 
@@ -69,7 +71,9 @@ export default function DashboardSidebar({ currentUser, activeSection, isVisible
                   : 'border-transparent text-black hover:border-[#f97316] rounded-lg hover:bg-[#fff7ed] hover:text-[#f97316]'
               }`}
             >
-              <span className={`flex h-5 w-5 items-center justify-center border text-[10px] ${isActive ? 'border-white' : 'border-black'}`}>
+              <span
+                className={`flex h-5 w-5 items-center justify-center border text-[10px] ${isActive ? 'border-white' : 'border-black'}`}
+              >
                 {item.marker}
               </span>
               {item.label}
@@ -80,4 +84,3 @@ export default function DashboardSidebar({ currentUser, activeSection, isVisible
     </aside>
   )
 }
-

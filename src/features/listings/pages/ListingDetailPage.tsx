@@ -4,6 +4,7 @@ import Navbar from '../../../shared/components/Navbar'
 import Spinner from '../../../shared/components/Spinner'
 import { getCurrentUser } from '../../auth/authStorage'
 import { useCreateReview, useListingReviews } from '../../reviews/hooks'
+import ListingPhotoGallery from '../components/ListingPhotoGallery'
 import { useListing } from '../hooks/useListing'
 
 export default function ListingDetailPage() {
@@ -91,71 +92,70 @@ export default function ListingDetailPage() {
       </div>
     )
   }
-
-  const firstPhoto = listing.photos[0]
+  const photos = listing.photos ?? []
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <Navbar variant="solid" />
       <main className="mx-auto max-w-6xl px-6 py-10">
-        <div className="rounded-[2rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/30 overflow-hidden">
-          <div className="relative overflow-hidden">
-            {firstPhoto && (
-              <img src={firstPhoto.url} alt={listing.title} className="h-[420px] w-full object-cover" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/30 to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6 flex flex-col gap-3 rounded-3xl bg-white/95 p-6 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between shadow-lg">
-              <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-slate-500 font-semibold">{listing.location}</p>
-                <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">{listing.title}</h1>
-              </div>
-              <div className="space-y-1 text-right">
-                <p className="text-2xl font-bold text-slate-900">${listing.pricePerNight}<span className="text-base font-semibold text-slate-600"> /night</span></p>
-                <p className="text-sm text-slate-600">Type: <span className="font-semibold">{listing.type}</span></p>
-              </div>
-            </div>
+        <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-lg shadow-slate-200/30">
+          <div className="relative mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">
+            <ListingPhotoGallery
+              photos={photos.map((p) => ({ id: p.id, url: p.url }))}
+              title={listing.title}
+            />
           </div>
-
           <div className="space-y-8 p-8 sm:p-10">
             <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
               <div className="space-y-5">
                 <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-                  <h2 className="text-2xl font-bold text-slate-900">About this property</h2>
-                  <div className="mt-4 space-y-4">
-                    <div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.35em] text-slate-600">Amenities</p>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {listing.amenities.map((amenity) => (
-                          <span key={amenity} className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-700 border border-slate-200">
-                            {amenity}
-                          </span>
-                        ))}
-                      </div>
+                  <h2 className="text-xl font-bold text-slate-900">About</h2>
+                  {listing.description && (
+                    <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-slate-600">{listing.description}</p>
+                  )}
+                  <div className="mt-5">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Amenities</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {listing.amenities.map((amenity) => (
+                        <span
+                          key={amenity}
+                          className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700"
+                        >
+                          {amenity}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-                    <p className="text-sm uppercase tracking-[0.35em] font-semibold text-slate-600">Property Details</p>
-                    <ul className="mt-4 space-y-3 text-slate-700">
-                      <li> <span className="dont-semibold">{listing.description}</span></li>
-                      <li>Guest: <span className="font-semibold">{listing.guest}</span> </li>
-                      <li>Type: <span className="font-semibold">{listing.type}</span></li>
-                      <li>Photos: <span className="font-semibold">{listing.photos.length}</span></li>
-                      <li>Reviews: <span className="font-semibold">{reviews.length}</span></li>
-                      <li>Rating: <span className="font-semibold">{reviews.length ? averageRating.toFixed(1) : 'New'}</span></li>
-                    </ul>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Details</p>
+                    <p className="mt-3 text-sm text-slate-700">
+                      <span className="font-semibold text-slate-900">{listing.type}</span>
+                      <span className="text-slate-400"> · </span>
+                      {listing.guest} guests max
+                      <span className="text-slate-400"> · </span>
+                      {reviews.length ? `${averageRating.toFixed(1)}★ (${reviews.length})` : 'New listing'}
+                    </p>
                   </div>
                   <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-                    <p className="text-sm uppercase tracking-[0.35em] font-semibold text-slate-600">Host</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Host</p>
                     <div className="mt-4 flex items-center gap-4">
-                      {listing.host.avatar && (
-                        <img src={listing.host.avatar} alt={listing.host.name} className="h-14 w-14 rounded-full object-cover" />
+                      {listing.host?.avatar && (
+                        <img
+                          src={listing.host.avatar}
+                          alt={listing.host.name}
+                          className="h-14 w-14 rounded-full object-cover"
+                        />
                       )}
                       <div>
-                        <p className="font-semibold text-slate-900">{listing.host.name}</p>
-                        <p className="text-sm text-slate-600">Host since {new Date(listing.host.createdAt).getFullYear()}</p>
+                        <p className="font-semibold text-slate-900">{listing.host?.name ?? 'Host'}</p>
+                        {listing.host?.createdAt ? (
+                          <p className="text-xs text-slate-600">
+                            Since {new Date(listing.host.createdAt).getFullYear()}
+                          </p>
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -164,19 +164,20 @@ export default function ListingDetailPage() {
 
               <aside className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-lg shadow-slate-200/30">
                 <div className="space-y-4">
-                  <div className="rounded-3xl bg-white p-4 border border-slate-200">
-                    <p className="text-sm uppercase tracking-[0.35em] font-semibold text-slate-600">Booking info</p>
-                    <p className="mt-3 text-lg font-bold text-slate-900">Listed on {new Date(listing.createdAt).toLocaleDateString()}</p>
-                    <p className="mt-1 text-sm text-slate-600">Last updated {new Date(listing.updatedAt).toLocaleDateString()}</p>
+                  <div className="rounded-3xl border border-slate-200 bg-white p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Booking</p>
+                    <p className="mt-2 text-xs text-slate-500">
+                      Listed {new Date(listing.createdAt).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
+                    </p>
                   </div>
 
-                  <div className="space-y-4 rounded-3xl border border-slate-200 bg-white p-5">
-                    <p className="text-sm font-semibold text-slate-700">
-                      From <span className="text-slate-950">${listing.pricePerNight}</span> / night · up to {listing.guest} guests
+                  <div className="space-y-3 rounded-3xl border border-slate-200 bg-white p-5">
+                    <p className="text-sm font-semibold text-slate-900">
+                      ${listing.pricePerNight}
+                      <span className="font-normal text-slate-500"> / night</span>
+                      <span className="text-slate-400"> · </span>
+                      {listing.guest} guests
                     </p>
-                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                      Use the guided booking flow to pick dates, guest details, and confirm payment (demo).
-                    </div>
 
                     {!currentUser ? (
                       <Link
@@ -186,18 +187,36 @@ export default function ListingDetailPage() {
                         Login to book
                       </Link>
                     ) : currentUser.role === 'GUEST' ? (
-                      <Link
-                        to={`/listings/${listing.id}/book`}
-                        className="inline-flex w-full items-center justify-center rounded-full bg-[#f97316] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#000000]"
-                      >
-                        Continue to book
-                      </Link>
+                      listing.isAvailable === false ? (
+                        <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm text-slate-600">
+                          This stay is not available to book right now.
+                        </p>
+                      ) : (
+                        <Link
+                          to={`/listings/${listing.id}/book`}
+                          className="inline-flex w-full flex-col items-center justify-center rounded-full bg-[#f97316] px-4 py-3.5 text-center text-white shadow-sm transition hover:bg-black"
+                        >
+                          <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/85">
+                            Available on
+                          </span>
+                          <span className="mt-1 text-base font-bold">
+                            {listing.availableFrom
+                              ? new Date(listing.availableFrom).toLocaleDateString(undefined, {
+                                  weekday: 'short',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })
+                              : 'Choose your dates'}
+                          </span>
+                          <span className="mt-1 text-xs font-medium text-white/90">Continue to book</span>
+                        </Link>
+                      )
                     ) : (
                       <Link
                         to="/dashboard"
                         className="inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-700"
                       >
-                        Open dashboard
+                        Dashboard
                       </Link>
                     )}
                   </div>

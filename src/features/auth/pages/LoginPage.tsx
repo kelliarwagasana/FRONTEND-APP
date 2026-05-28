@@ -10,6 +10,7 @@ import type { LoginCredentials } from '../types'
 import ThemeToggle from '../../../shared/components/ThemeToggle'
 import { uptownHouseImage } from '../../../shared/brandImages'
 import { initials } from '../../dashboard/utils/dashboardUtils'
+import { authForm } from '../authFormClasses'
 
 const authImage = uptownHouseImage
 
@@ -72,8 +73,8 @@ export default function LoginPage() {
         </div>
         <div className="mx-auto w-full max-w-md">
           {user ? (
-            <div className="flex flex-col items-center text-center">
-              <span className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-900 text-2xl font-black text-white ring-4 ring-[#fed7aa]">
+            <div className={`${authForm.signedInCard} flex flex-col items-center text-center`}>
+              <span className="flex h-24 w-24 items-center justify-center rounded-full bg-slate-900 text-2xl font-black text-white">
                 {initials(user.name)}
               </span>
               <p className="mt-5 text-sm font-black uppercase tracking-[0.25em] text-[#f97316]">Signed in</p>
@@ -83,7 +84,7 @@ export default function LoginPage() {
               </p>
               <Link
                 to={getPostLoginPath(user)}
-                className="mt-6 inline-flex w-full items-center justify-center gap-2  bg-[#f97316] px-5 py-3 text-sm font-black text-white transition hover:bg-black"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#f97316] bg-[#f97316] px-5 py-3 text-sm font-black text-white transition hover:border-black hover:bg-black"
               >
                 Continue
                 <FiArrowRight />
@@ -92,7 +93,7 @@ export default function LoginPage() {
           ) : (
             <>
               <LoginForm error={error} onSubmit={submitLogin} />
-              <p className="mt-5  bg-white px-4 py-2.5 text-center text-sm font-semibold text-black shadow-md">
+              <p className={authForm.footer}>
                 New here?{' '}
                 <Link to="/register" className="font-black text-[#f97316] hover:text-black">
                   Create an account

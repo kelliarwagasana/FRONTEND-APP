@@ -81,6 +81,10 @@ export function mapListingFromApi(raw: Record<string, unknown>): Listing {
     // - isBookedByMe => user already paid/hold it (PENDING or CONFIRMED)
     isAvailable:
       typeof raw.isBookedByMe === 'boolean' ? !raw.isBookedByMe : (raw.isAvailable as Listing['isAvailable']),
+    availableFrom:
+      typeof raw.availableFrom === 'string' && raw.availableFrom.trim() !== ''
+        ? raw.availableFrom
+        : undefined,
   }
 }
 

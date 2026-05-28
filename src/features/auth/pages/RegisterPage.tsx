@@ -7,6 +7,7 @@ import { getPostLoginPath } from '../authStorage'
 import { validateRegisterFields } from '../authValidation'
 import { useAuth } from '../hooks/useAuth'
 import type { RegisterCredentials, RegisterRole } from '../types'
+import { authForm } from '../authFormClasses'
 
 const initialForm: RegisterCredentials = {
   name: '',
@@ -68,7 +69,7 @@ export default function RegisterPage() {
   return (
     <main className="grid min-h-screen bg-white text-black lg:grid-cols-[0.9fr_1.1fr]">
       <div
-        className="hidden border-r-2 border-black bg-black bg-cover bg-center text-white lg:block"
+        className="hidden border-r border-[#eadfdb] bg-black bg-cover bg-center text-white lg:block"
         style={{ backgroundImage: `linear-gradient(90deg, rgba(0,0,0,.92), rgba(0,0,0,.55)), url(${authImage})` }}
       >
         <div className="flex h-full flex-col justify-between p-10">
@@ -93,18 +94,15 @@ export default function RegisterPage() {
         <div className="mx-auto flex w-full max-w-lg items-start lg:min-h-full lg:items-center">
           <form
             onSubmit={handleSubmit}
-            className="relative overflow-hidden border-2 border-black bg-white p-5 shadow-[10px_10px_0_#f97316]"
+            className={authForm.card}
           >
-            <div className="absolute right-[-4rem] top-[-4rem] h-36 w-36 border-2 border-black bg-[#fff7ed]" />
-            <div className="relative">
-              <p className="text-xs font-black uppercase tracking-[0.25em] text-[#f97316]">Create account</p>
-              <h1 className="mt-2 text-2xl font-black tracking-tight text-black">Join AirBnb today</h1>
-              <p className="mt-2 text-sm font-semibold leading-5 text-black/55">
-                Required: full name, username, phone, email, and password (at least 8 characters). Choose whether this
-                account is for booking stays as a guest or managing listings as a host.
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#f97316]">Create account</p>
+              <h1 className="mt-2 text-2xl font-bold text-black">Join AirBnb today</h1>
+              <p className="mt-2 text-sm text-black/55">
+                Full name, username, phone, email, and password (at least 8 characters). Choose guest or host.
               </p>
 
-              <div className="mt-4 grid grid-cols-2 gap-2 border-2 border-black bg-white p-1">
+              <div className={authForm.roleGroup}>
                 {[
                   { role: 'GUEST' as const, label: 'Sign up as guest', icon: FiUser },
                   { role: 'HOST' as const, label: 'Sign up as host', icon: FiBriefcase },
@@ -134,29 +132,25 @@ export default function RegisterPage() {
                 type="button"
                 disabled
                 title="Google sign-in is not available yet"
-                className="mt-4 flex w-full cursor-not-allowed items-center justify-center gap-3 border-2 border-black/30 bg-slate-100 px-4 py-2.5 text-sm font-black text-black/40"
+                className={authForm.secondaryButton}
               >
                 <FcGoogle className="text-xl opacity-50" />
                 Continue with Google (coming soon)
               </button>
 
               <div className="my-4 flex items-center gap-3">
-                <span className="h-0.5 flex-1 bg-black" />
-                <span className="text-xs font-black uppercase tracking-[0.2em] text-black/45">or register</span>
-                <span className="h-0.5 flex-1 bg-black" />
+                <span className={authForm.dividerLine} />
+                <span className={authForm.dividerText}>or register</span>
+                <span className={authForm.dividerLine} />
               </div>
 
-              {error && (
-                <p className="border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-bold text-black">
-                  {error}
-                </p>
-              )}
+              {error && <p className={authForm.error}>{error}</p>}
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <label className="block sm:col-span-2">
-                  <span className="text-sm font-bold text-slate-700">Full name</span>
-                  <span className="mt-1.5 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 focus-within:border-[#f97316] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#f97316]/10">
-                    <FiUser className="text-slate-400" />
+                  <span className={authForm.label}>Full name</span>
+                  <span className={authForm.input}>
+                    <FiUser className={authForm.inputIcon} />
                     <input
                       name="name"
                       value={form.name}
@@ -170,9 +164,9 @@ export default function RegisterPage() {
                 </label>
 
                 <label className="block">
-                  <span className="text-sm font-bold text-slate-700">Username</span>
-                  <span className="mt-1.5 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 focus-within:border-[#f97316] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#f97316]/10">
-                    <FiUser className="text-slate-400" />
+                  <span className={authForm.label}>Username</span>
+                  <span className={authForm.input}>
+                    <FiUser className={authForm.inputIcon} />
                     <input
                       name="username"
                       value={form.username}
@@ -186,9 +180,9 @@ export default function RegisterPage() {
                 </label>
 
                 <label className="block">
-                  <span className="text-sm font-bold text-slate-700">Phone</span>
-                  <span className="mt-1.5 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 focus-within:border-[#f97316] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#f97316]/10">
-                    <FiPhone className="text-slate-400" />
+                  <span className={authForm.label}>Phone</span>
+                  <span className={authForm.input}>
+                    <FiPhone className={authForm.inputIcon} />
                     <input
                       name="phone"
                       value={form.phone}
@@ -202,9 +196,9 @@ export default function RegisterPage() {
                 </label>
 
                 <label className="block sm:col-span-2">
-                  <span className="text-sm font-bold text-slate-700">Email address</span>
-                  <span className="mt-1.5 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 focus-within:border-[#f97316] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#f97316]/10">
-                    <FiMail className="text-slate-400" />
+                  <span className={authForm.label}>Email address</span>
+                  <span className={authForm.input}>
+                    <FiMail className={authForm.inputIcon} />
                     <input
                       name="email"
                       type="email"
@@ -219,9 +213,9 @@ export default function RegisterPage() {
                 </label>
 
                 <label className="block sm:col-span-2">
-                  <span className="text-sm font-bold text-slate-700">Password</span>
-                  <span className="mt-1.5 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 focus-within:border-[#f97316] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#f97316]/10">
-                    <FiLock className="text-slate-400" />
+                  <span className={authForm.label}>Password</span>
+                  <span className={authForm.input}>
+                    <FiLock className={authForm.inputIcon} />
                     <input
                       name="password"
                       type={showPassword ? 'text' : 'password'}
@@ -246,19 +240,18 @@ export default function RegisterPage() {
 
               <button
                 type="submit"
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#f97316] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#f97316]/20 transition hover:bg-[#000000]"
+                className={authForm.submit}
               >
                 Create account
                 <FiArrowRight />
               </button>
 
-              <p className="mt-3 text-center text-sm text-slate-600">
+              <p className={`${authForm.footer} mt-0 border-t-0 pt-3`}>
                 Already have an account?{' '}
                 <Link to="/login" className="font-semibold text-[#f97316] hover:text-[#f97316]">
                   Login
                 </Link>
               </p>
-            </div>
           </form>
         </div>
       </div>

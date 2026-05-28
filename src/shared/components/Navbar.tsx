@@ -4,6 +4,7 @@ import { FiChevronDown, FiLogOut, FiUser } from 'react-icons/fi'
 import { getCurrentUser, logout, subscribeToAuthChange } from '../../features/auth/authStorage'
 import type { User } from '../../features/auth/types'
 import UserAvatar from '../../features/dashboard/components/UserAvatar'
+import { formatUserRole } from '../../features/dashboard/utils/dashboardUtils'
 import ThemeToggle from './ThemeToggle'
 
 const navLinks = [
@@ -61,6 +62,10 @@ export default function Navbar({ variant = 'transparent' }: NavbarProps) {
       : [{ label: 'Dashboard', to: '/dashboard' }]
     : []
 
+  const accountLabel = currentUser
+    ? currentUser.username?.trim() || currentUser.name
+    : ''
+
   return (
     <header className={headerClasses}>
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
@@ -94,17 +99,19 @@ export default function Navbar({ variant = 'transparent' }: NavbarProps) {
                 aria-label="Open account menu"
               >
                 <UserAvatar user={currentUser} size="sm" />
-                <span className="hidden max-w-28 truncate text-sm font-bold sm:inline">{currentUser.name}</span>
+                <span className="hidden max-w-28 truncate text-sm font-bold sm:inline">{accountLabel}</span>
                 <FiChevronDown className={`transition ${isAccountOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isAccountOpen && (
-                <div className="absolute right-0 top-14 z-50 w-64 overflow-hidden border-2 border-black bg-white text-black shadow-[8px_8px_0_#f97316]">
-                  <div className="flex items-center gap-3 border-b border-black/10 p-4">
+                <div className="absolute right-0 top-14 z-50 w-64 overflow-hidden rounded-xl border border-[#eadfdb] bg-white text-black shadow-sm">
+                  <div className="flex items-center gap-3 border-b border-[#eadfdb] p-4">
                     <UserAvatar user={currentUser} size="md" />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-bold text-black">{currentUser.name}</p>
-                      <p className="truncate text-xs text-black/55">{currentUser.email}</p>
+                      <p className="truncate text-sm font-semibold tracking-tight text-slate-900">{accountLabel}</p>
+                      <p className="mt-0.5 truncate text-[11px] font-medium uppercase tracking-[0.18em] text-slate-500">
+                        {formatUserRole(currentUser.role)}
+                      </p>
                     </div>
                   </div>
 

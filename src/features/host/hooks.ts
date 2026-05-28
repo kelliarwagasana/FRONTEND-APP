@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/hooks/useAuth'
 import { api } from '../../lib/api'
@@ -76,6 +77,7 @@ export function useCreateListing() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['listings', 'mine'] })
       qc.invalidateQueries({ queryKey: ['listings'] })
+      qc.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
 }
@@ -108,7 +110,8 @@ export function useUpdateListing(listingId: string | undefined) {
       await qc.cancelQueries({ queryKey: ['listing', listingId] })
       const previous = qc.getQueryData<Listing>(['listing', listingId])
       if (previous) {
-        const { newPhotoFiles: _, ...optimistic } = body
+        const { newPhotoFiles, ...optimistic } = body
+        void newPhotoFiles
         qc.setQueryData<Listing>(['listing', listingId], {
           ...previous,
           ...optimistic,
@@ -170,6 +173,45 @@ export function useHostBookingAction() {
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ['bookings', 'host'] })
+      qc.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
+}
+
+export function useHostStats() {
+  const listingsQuery = useMyListings()
+  const bookingsQuery = useHostBookings()
+
+  const stats = useMemo(() => {
+    const listings = listingsQuery.data ?? []
+    const bookings = bookingsQuery.data ?? []
+
+    const guestIds = new Set<string>()
+    for (const booking of bookings) {
+      if (booking.guest?.id) guestIds.add(booking.guest.id)
+    }
+
+    const totalEarnings = bookings
+      .filter((b) => b.status === 'CONFIRMED')
+      .reduce((sum, b) => sum + b.totalPrice, 0)
+
+    return {
+      totalGuests: guestIds.size,
+      approvedListings: listings.filter((l) => l.status === 'PUBLISHED').length,
+      totalEarnings,
+      bookingRequests: bookings.length,
+      pendingBookings: bookings.filter((b) => b.status === 'PENDING').length,
+      confirmedBookings: bookings.filter((b) => b.status === 'CONFIRMED').length,
+      cancelledBookings: bookings.filter((b) => b.status === 'CANCELLED').length,
+      pendingListings: listings.filter((l) => l.status === 'PENDING_APPROVAL').length,
+      rejectedListings: listings.filter((l) => l.status === 'REJECTED').length,
+      totalListings: listings.length,
+    }
+  }, [listingsQuery.data, bookingsQuery.data])
+
+  return {
+    stats,
+    isLoading: listingsQuery.isPending || bookingsQuery.isPending,
+    isError: listingsQuery.isError || bookingsQuery.isError,
+  }
 }

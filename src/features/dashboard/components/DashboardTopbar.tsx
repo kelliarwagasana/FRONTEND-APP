@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { logout } from '../../auth/authStorage'
 import type { User } from '../../auth/types'
-import { getSectionTitle } from '../utils/dashboardUtils'
+import ThemeToggle from '../../../shared/components/ThemeToggle'
+import NotificationBell from '../../notifications/components/NotificationBell'
+import { getSectionTitle, formatUserRole } from '../utils/dashboardUtils'
 import type { DashboardSection } from '../utils/dashboardUtils'
 import UserAvatar from './UserAvatar'
-import ThemeToggle from '../../../shared/components/ThemeToggle'
-
 interface DashboardTopbarProps {
   currentUser: User
   activeSection: DashboardSection
@@ -28,6 +28,9 @@ export default function DashboardTopbar({
     navigate('/')
   }
 
+  const displayUsername = currentUser.username?.trim() || currentUser.name
+  const roleLine = formatUserRole(currentUser.role)
+
   return (
     <header className="sticky top-0 z-30 border-b-2 border-black bg-white/95 backdrop-blur">
       <div className="flex min-h-[78px] items-center justify-between gap-4 px-5 lg:px-7">
@@ -44,25 +47,33 @@ export default function DashboardTopbar({
         </div>
 
         <div className="flex items-center gap-3">
+          <NotificationBell />
           <ThemeToggle />
           <div className="relative">
             <button
               type="button"
               onClick={() => setIsMenuOpen((current) => !current)}
-              className="flex items-center gap-3 border-2 border-transparent px-1 py-1 text-left transition hover:border-black hover:bg-[#fff7ed]"
+              className="flex items-center gap-3 rounded-xl border border-[#eadfdb] bg-white px-3 py-2 text-left shadow-sm transition hover:border-[#f97316]/40 hover:bg-[#fff7ed]"
             >
-              <span className="relative">
+              <span className="relative shrink-0">
                 <UserAvatar user={currentUser} size="md" />
-                <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 border-2 border-white bg-[#f97316]" />
+                <span
+                  className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-[#f97316]"
+                  aria-hidden
+                />
               </span>
-              <span className="hidden sm:block">
-                <span className="block text-sm font-black text-black">{currentUser.name}</span>
-                <span className="block text-xs text-black/55">{currentUser.email}</span>
+              <span className="hidden min-w-0 sm:block">
+                <span className="block truncate text-sm font-semibold tracking-tight text-slate-900">
+                  {displayUsername}
+                </span>
+                <span className="mt-0.5 block truncate text-[11px] font-medium uppercase tracking-[0.18em] text-slate-500">
+                  {roleLine}
+                </span>
               </span>
             </button>
 
             {isMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 border-2 border-black bg-white p-2 shadow-[6px_6px_0_#f97316]">
+              <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-[#eadfdb] bg-white p-2 shadow-sm">
                 <Link
                   to="/dashboard/profile"
                   className="block px-3 py-2 text-sm font-black text-black hover:bg-[#fff7ed]"
